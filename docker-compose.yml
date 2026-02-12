@@ -5,6 +5,9 @@ services:
       - "8080:8080"
     environment:
       POSTGRES_DSN: ${POSTGRES_DSN}
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: "redispass"
+      REDIS_DB: "0"
     depends_on:
       postgres:
         condition: service_healthy
