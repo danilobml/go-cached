@@ -65,9 +65,27 @@ func (us *UserService) GetUser(ctx context.Context, id string) (*models.User, er
 }
 
 func (us *UserService) GetAllUsers(ctx context.Context) ([]*models.User, error) {
+	key := "q:Users:All"
+	cached, err := us.cache.Get(ctx, key)
+	if err == nil {
+		var users []*models.User
+		if err := json.Unmarshal([]byte(cached), &users); err == nil {
+			return users, nil
+		}
+		_ = us.cache.Del(ctx, key)
+	} else if err != redis.Nil {
+		log.Println("cache GET failed", err)
+	}
+
 	users, err := us.userRepo.List(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	if toCache, err := json.Marshal(users); err == nil {
+		if err := us.cache.Set(ctx, key, toCache, 30*time.Second); err != nil {
+			log.Println("cache SET failed", err)
+		}
 	}
 
 	return users, nil
@@ -78,6 +96,8 @@ func (us *UserService) CreateUser(ctx context.Context, name, email string) error
 	if err != nil {
 		return err
 	}
+
+	_ = us.cache.Del(ctx, "q:Users:All")
 
 	return nil
 }
