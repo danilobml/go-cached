@@ -1,0 +1,48 @@
+services:
+  server:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_DSN: ${POSTGRES_DSN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true  
+    networks:
+      - cached
+
+  postgres:
+    image: postgres:17-alpine
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cached -d cached"]
+    restart: always
+    environment:
+      POSTGRES_DB: cached
+      POSTGRES_PASSWORD: cached
+      POSTGRES_USER: cached
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./internal/db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - cached
+
+  redis:
+    image: redis:latest
+    command: redis-server
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - cached
+
+volumes:
+  pgdata:
+  redis-data:
+
+networks:
+  cached:
+    driver: bridge
