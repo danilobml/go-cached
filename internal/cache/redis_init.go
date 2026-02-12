@@ -6,13 +6,13 @@ import (
 	"time"
 )
 
-type Config struct {
+type RedisConfig struct {
 	Addr     string
 	Password string
 	DB       int
 }
 
-func InitRedis(cfg Config) (*RedisClient, error) {
+func InitRedis(cfg RedisConfig) (*RedisClient, error) {
 	client := NewRedisClient(cfg.Addr, cfg.Password, cfg.DB)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)

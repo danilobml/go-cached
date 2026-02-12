@@ -31,7 +31,7 @@ func main() {
 	}
 	defer dbConnPool.Close()
 
-	redisCfg := cache.Config{
+	redisCfg := cache.RedisConfig{
 		Addr:     appConfig.redisAddr,
 		Password: appConfig.redisPassword,
 		DB:       redisDB,
