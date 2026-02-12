@@ -14,7 +14,7 @@ func StartServer(handler *handlers.UserHandler) {
 	routeHandler := routes.RegisterRoutes(handler)
 
 	srv := http.Server{
-		Addr: httpPort,
+		Addr:    httpPort,
 		Handler: routeHandler,
 	}
 

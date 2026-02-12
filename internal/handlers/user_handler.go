@@ -16,7 +16,7 @@ import (
 type UserService interface {
 	GetUser(ctx context.Context, id string) (*models.User, error)
 	GetAllUsers(ctx context.Context) ([]*models.User, error)
-	CreateUser(ctx context.Context,	name, email string) error
+	CreateUser(ctx context.Context, name, email string) error
 }
 
 type UserHandler struct {
