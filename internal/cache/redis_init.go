@@ -6,6 +6,12 @@ import (
 	"time"
 )
 
+type Config struct {
+	Addr     string
+	Password string
+	DB       int
+}
+
 func InitRedis(cfg Config) (*RedisClient, error) {
 	client := NewRedisClient(cfg.Addr, cfg.Password, cfg.DB)
 
